@@ -151,6 +151,36 @@
               }
             }
           },
+          "409": {
+            "description": "attempt_cap",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "board_expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "default": {
             "description": "Stable error code",
             "content": {
@@ -171,7 +201,8 @@
               "type": "string"
             }
           }
-        ]
+        ],
+        "description": "Same key returns the same attempt. Serialize allocations per player and board and reserve at most two slots."
       }
     },
     "/v1/attempts/{attemptId}/result": {
@@ -208,6 +239,46 @@
               }
             }
           },
+          "409": {
+            "description": "conflicting_replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "board_expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "invalid_move or not_terminal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "default": {
             "description": "Stable error code",
             "content": {
@@ -218,7 +289,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Identical completed replay returns the persisted result even after cutoff. New results require full body receipt before closesAt. Reject conflicting replays atomically."
       }
     },
     "/v1/rankings": {

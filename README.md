@@ -108,6 +108,7 @@ Sənədləri və kontraktları repo kökündən yoxlamaq mümkündür:
 
 ```sh
 python3 scripts/check_contracts.py
+python3 scripts/check_lifecycle.py
 ```
 
 Bu əmr Markdown keçidlərini, SVG sintaksisini, fiqur kataloqunu, oyun vektorlarını və OpenAPI daxili istinadlarını yoxlayır. İlk icra mərhələsində Flutter iş sahəsi və quraşdırma əmri əlavə edildikdən sonra, `apps/mobile` daxilində:
@@ -131,7 +132,7 @@ flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080
 | **E · Android buraxılışı** | İmzalanmış daxili sınaq versiyası | Fiziki cihaz matrisi, mağaza bəyanları, lisenziya inventarı və geri qaytarma sınağı. |
 | **F · iOS buraxılışı** | iOS sınaq və mağaza namizədi | Platforma imzası, məxfilik bəyanları, SDK-lar və real iOS cihazı üzrə ayrıca yoxlama. |
 
-[AGENTS.md](AGENTS.md) Codex-in məcburi iş qaydalarını müəyyən edir. Agent cari mərhələyə aid sənədləri oxuyur, əlaqəsiz dəyişikliklərdən qaçır və qısa, sübutlu iş qeydi təqdim edir. Sənədlər arasında ziddiyyət çıxarsa, normativ kontrakt və onun test vektoru eyni dəyişiklikdə dəqiqləşdirilir. [İcra və sübut formatı](docs/EXECUTION.md) · [Buraxılış və istismar meyarları](docs/RELEASE.md)
+[AGENTS.md](AGENTS.md) Codex-in məcburi iş qaydalarını müəyyən edir. Agent cari mərhələyə aid sənədləri oxuyur, əlaqəsiz dəyişikliklərdən qaçır və qısa, sübutlu iş qeydi təqdim edir. Sənədlər arasında ziddiyyət çıxarsa, normativ kontrakt və onun test vektoru eyni dəyişiklikdə dəqiqləşdirilir. [Qəbul ssenariləri](docs/ACCEPTANCE.md) · [İcra və sübut formatı](docs/EXECUTION.md) · [Buraxılış və istismar meyarları](docs/RELEASE.md)
 
 ## Sənədlərin xəritəsi
 

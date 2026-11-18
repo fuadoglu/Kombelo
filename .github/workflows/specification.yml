@@ -5,6 +5,31 @@ permissions:
 jobs:
   contracts:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: kombelo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s
+          --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
-      - run: python3 scripts/check_contracts.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/check_contracts.py
+      - run: python scripts/check_lifecycle.py
+      - run: |
+          python -m pip install openapi-spec-validator==0.7.2
+          openapi-spec-validator contracts/openapi.json
+      - name: Apply PostgreSQL schema and verify constraints
+        env:
+          PGPASSWORD: test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d kombelo -f contracts/schema.sql -f contracts/schema-smoke.sql

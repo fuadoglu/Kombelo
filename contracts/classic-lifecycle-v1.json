@@ -1,0 +1,92 @@
+{
+  "before": {
+    "board": [
+      "...#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#."
+    ],
+    "tray": [
+      null,
+      null,
+      {
+        "shape": "dot",
+        "rotation": 0,
+        "color": 1
+      }
+    ],
+    "rng": 21,
+    "score": 99,
+    "chain": 3,
+    "personalBest": 99
+  },
+  "original": {
+    "slot": 2,
+    "row": 0,
+    "col": 1
+  },
+  "alternate": {
+    "slot": 2,
+    "row": 2,
+    "col": 0
+  },
+  "terminal": {
+    "board": [
+      ".#.#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#.",
+      ".#.#.#.#",
+      "#.#.#.#."
+    ],
+    "tray": [
+      {
+        "shape": "bar2",
+        "rotation": 0,
+        "color": 0
+      },
+      {
+        "shape": "zag4",
+        "rotation": 0,
+        "color": 0
+      },
+      {
+        "shape": "zig4",
+        "rotation": 0,
+        "color": 2
+      }
+    ],
+    "rng": 962054837,
+    "score": 100,
+    "chain": 0,
+    "personalBest": 99
+  },
+  "rewardEvents": [
+    {
+      "event": "dismissed",
+      "phase": "settling",
+      "grants": 0
+    },
+    {
+      "event": "earned",
+      "phase": "playing",
+      "grants": 1
+    },
+    {
+      "event": "earned_duplicate",
+      "phase": "playing",
+      "grants": 1
+    }
+  ],
+  "alternateOutcome": {
+    "terminal": false,
+    "score": 100,
+    "rng": 962054837
+  }
+}

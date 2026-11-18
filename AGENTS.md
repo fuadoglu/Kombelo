@@ -17,3 +17,8 @@
 - Follow [execution slices](docs/EXECUTION.md). Use the game JSON and vectors, [game protocol](docs/GAME_PROTOCOL.md), [OpenAPI](contracts/openapi.json), [SQL schema](contracts/schema.sql) and the relevant UI/integration contracts before changing behavior.
 - Run `python3 scripts/check_contracts.py` for contract edits. Do not stop after creating scaffolding. Finish the active slice through its normal entry point, exercise failure paths and demonstrate the user-visible result.
 - Use the browser and native evidence format in EXECUTION. If a genuine platform prerequisite is absent, complete independent checks and identify precisely which verification remains.
+
+## Qəbul ssenariləri
+
+- Hər slice üçün [qəbul kontraktındakı](docs/ACCEPTANCE.md) uyğun ID-ləri işlət və nəticəni həmin ID ilə göstər. Fixture, kontrakt yoxlaması, Chrome və native sübut ayrıca qeyd olunur.
+- Kontrakt yoxlamaları: `python3 scripts/check_contracts.py` və `python3 scripts/check_lifecycle.py`. Server dəyişiklikləri yarışın real API və PostgreSQL inteqrasiya sınaqlarını da tələb edir.
