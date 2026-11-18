@@ -77,6 +77,12 @@ Server təsdiqi gedişin qanuniliyini və xalı yoxlayır. Ortaq lövhənin həl
 
 Dillər **AZ, EN, TR, RU, ES, pt-BR, DE, FR və AR**. Ərəb dilində menyu sağdan sola işləyir, fiqur və lövhə koordinatları bütün dillərdə eynidir. Funksional ikonlar üçün lisenziyası yoxlanılmış Lucide seçimi, səslər üçün təsdiqlənmiş açıq lisenziyalı mənbələr və orijinal Kombelo melodiyası nəzərdə tutulur. [UI sistemi](docs/UI_SYSTEM.md) · [Aktivlərin mənbə və lisenziya reyestri](docs/ASSET_MANIFEST.md)
 
+### Təsdiqlənmiş interaktiv UI atlası
+
+[Kombelo UI atlasını](docs/Kombelo_UI_Atlasi.html) yükləyib brauzerdə aç. Atlas 28 ekran və vəziyyəti rəngli UI və Wireframe rejimlərində göstərir. Klassik lövhədə firuzəyi təkxanalı fiquru işarələnmiş xanaya qoyaraq iki xəttin silinməsini və `3 kombo · +37 xal` reaksiyasını görmək olur. Pauza menyusundan Liqa, Profil və Ayarlar açılır.
+
+Atlas brauzerdə yerli işləyən dizayn referansıdır. Liqa, reklam və hesab axınları nümunə məlumatlarla göstərilir. Flutter tətbiqində oyun hesablaması üçün [oyun protokolu](docs/GAME_PROTOCOL.md), vizual icra üçün [UI sistemi](docs/UI_SYSTEM.md) və [qəbul ssenariləri](docs/ACCEPTANCE.md) əsas götürülür.
+
 ## 4. AdMob, Firebase və oyunçu seçimləri
 
 **AdMob yeganə gəlir mənbəyidir.** Uyğun Klassik sessiyalarında raundlar arasında seyrək tam ekran reklam göstərilir. Raund bitəndə həqiqətən davam etməyə imkan verən alternativ gediş varsa, oyunçu bir dəfə **«Reklama bax və son gedişi geri al»** seçə bilər. Mükafat yalnız SDK təsdiqi ilə tətbiq edilir. Oyun əvvəlki xal, kombo, fiqur dəsti və generator vəziyyətini birlikdə bərpa edir. Reklam hazır olmayanda yeni raunda keçid davam edir.

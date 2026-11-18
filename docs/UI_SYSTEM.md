@@ -1,5 +1,11 @@
 # Interface and asset specification
 
+## Approved interactive reference
+
+Open the [Kombelo UI atlas](Kombelo_UI_Atlasi.html) locally in a browser. It includes the approved Classic layout, combo and record states, result and league flows, and wireframes for 28 screens and states. Use it to compare hierarchy, interaction and layout. Use the versioned game protocol and acceptance contract for implementation and verification. The prototype's simulated ads, identity, rankings and sample gameplay data are illustrative.
+
+During Classic play, keep the score, personal best, pause control, board and tray visible. Place League, Profile and Settings in the pause menu. Near a grid boundary, allow a small release tolerance around the last visible valid target. A canceled gesture or a release clearly outside that target must leave game state unchanged. Keep the next legal drag available during clear effects. Preserve a Classic round while previewing League.
+
 Design baseline at 360×800 and 430×932 logical pixels, portrait; fit the board horizontally with 16 px side gutters, centered, and scale to available vertical safe area. Use 8 equal cells with 2 px gaps at baseline and fit the entire board above the tray. Keep the tray above system gesture insets, three equal hit zones of at least 48×48 logical px, and reserved feedback height so large scores and translated labels never shift the board mid-drag. At large text, allow chrome to scroll/reflow independently, preserve board geometry during gestures and provide tap-placement. Root surfaces: #121634 canvas, #20264A board, #30365C cell, #F7F8FF text, #B8C0E3 secondary. Pieces: #2DE1D2 cyan, #FFE05A yellow, #FF69B5 magenta, #FF926B coral, #A68CFF violet. Verify contrast on actual gradient backgrounds. Radius 16 panels, 12 controls, 6 cells. Fonts: system fallback plus licensed Noto where coverage requires. Score numerals tabular.
 
 | Route | Top | Main | Bottom |
