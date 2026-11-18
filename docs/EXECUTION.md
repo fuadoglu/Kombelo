@@ -11,6 +11,12 @@ Authority: game-v1.json and GAME_PROTOCOL govern the engine, OpenAPI and schema 
 | E | Android release candidate | Signed internal build, rollback drill, usage disclosures, asset/font provenance, device evidence |
 | F | iOS | Validate fresh signing, store privacy and audience rules, native SDK parity and device behavior |
 
+## Progress checkpoint · first rules increment
+
+Completed scope: the first roughly 10% increment establishes the pure Dart `packages/game_rules` boundary, implements the v1 xorshift generator and move scoring/line-clear rules, and checks them against the checked-in contract vectors. It does not claim that Slice A or the mobile game is complete. Flutter UI, SQLite persistence, Chrome pointer scenarios, and Android kill/resume remain open acceptance gates.
+
+Evidence for this increment: `./scripts/bootstrap.sh` and `./scripts/verify.sh` pass with Flutter stable 3.50.0 / Dart 3.14.0. The rule package has no Flutter runtime dependency. Since this increment has no user-visible screen, the Chrome and native gates remain pending until the mobile slice is implemented.
+
 At A, record supported SDKs and add one repo-level bootstrap and one verify command. Bootstrap must be repeatable from a clean clone, produce no credentials, and state exact missing prerequisites. Verify must run analyzer, engine vectors, UI tests and the documentation checker. Use Dart lockfiles and stable SDK versions. Keep the playbook short and update command names in README when implemented.
 
 For every visible slice start Flutter in Chrome, then drive a real pointer flow. If Chrome cannot be opened by Flutter directly, launch the Flutter web-server target and open the resulting URL in Chrome. Provide a forwarded URL when available, otherwise attach screenshots. Native SDK integrations require separate verification on Android; mocks remain explicitly labeled. Use fixture parameters or a dev-only route with gameplay, combo intersection, result, offline restore, league, consent and settings. Release builds must exclude fixture routes and mock flags.

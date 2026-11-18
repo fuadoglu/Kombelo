@@ -10,7 +10,7 @@ Kombelo portret ekranda bir baş barmaqla oynanan blok pazlıdır. Oyunçu üç 
 
 İlk buraxılış **Android** üçündür. **iOS** ayrıca cihaz və mağaza yoxlamalarından sonra gəlir. **Chrome** inkişaf zamanı lokal oyunu nümayiş etdirmək, toxunma axınını və interfeys dəyişikliklərini yoxlamaq üçündür.
 
-> **Cari vəziyyət:** Repo məhsul spesifikasiyasını, texniki kontraktları və sənəd yoxlayıcısını ehtiva edir. İşlək Flutter tətbiqi, server, mağaza buraxılışı və Chrome oyun demosu icra mərhələlərində hazırlanacaq.
+> **Cari vəziyyət:** Məhsul spesifikasiyası ilə yanaşı oyun nüvəsinin ilk işlək Dart paketi və v1 RNG/xal vektorları üçün icra olunan testlər mövcuddur. Flutter ekranı, cihaz yaddaşı, API/server, mağaza buraxılışı və Chrome oyunu hələ hazırlanmayıb.
 
 | | Oyunçu təcrübəsi | Məhsul qərarı |
 |---|---|---|
@@ -110,7 +110,16 @@ Atlas brauzerdə yerli işləyən dizayn referansıdır. Liqa, reklam və hesab 
 
 ## 6. Lokal yoxlama və Chrome nümayişi
 
-Sənədləri və kontraktları repo kökündən yoxlamaq mümkündür:
+İlk oyun nüvəsi incrementini quraşdırmaq və yoxlamaq üçün repo kökündən:
+
+```sh
+./scripts/bootstrap.sh
+./scripts/verify.sh
+```
+
+`bootstrap.sh` Dart 3.14.0 tələb edir (Flutter stable 3.50.0 paketində gəlir). Bu increment `game_rules` paketinin statik analizini və testlərini, həmçinin sənəd yoxlayıcılarını işlədir. Flutter/Chrome/Android qəbul yoxlamaları oynana bilən tətbiq Slice A-da hazır olduqdan sonra tətbiq edilir.
+
+Yalnız mövcud sənədləri yoxlamaq üçün:
 
 ```sh
 python3 scripts/check_contracts.py
