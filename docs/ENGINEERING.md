@@ -1,0 +1,24 @@
+# Engineering specification
+
+## Monorepo and boundaries
+
+- apps/mobile: Flutter Android app and Chrome development preview, then iOS. Isolate platform services behind small typed interfaces. Canvas via CustomPainter and measured repaint boundaries, widgets for controls and semantics. Render from state; visual effects never mutate rules.
+- packages/game_rules: Pure Dart immutable rules, versioned integer RNG, fixtures and canonical replays. No Flutter, network or storage dependencies. Golden vectors cover generator, scoring, tray refill, board terminal state and version migration.
+- services/api: Dart HTTP API backed by PostgreSQL. Start with one deployable service and separate scheduled commands using the same codebase. Use provider-managed auth supporting anonymous sessions and email recovery, server-side token verification and rate limits.
+- assets plus registry, docs, and scripts. Pin a stable Flutter version and toolchain after compatibility checks. CI checks format, analyzer, pure rules, widget/integration tests, translation parity, licenses, API contract and Android build. Choose dependencies only after verifying current Flutter/Android compatibility.
+
+## Storage and authority
+
+SQLite transaction persists the committed game snapshot and single-step undo snapshot plus run ID, previous generator state, score, combo, tray, rules version and reward-used marker. Persist commits serially. Restore old rules and reject incomplete migrations safely. Preserve in-flight preview only in memory. On an earned undo, apply once by run and ad request ID, with grant and state restore in one transaction. Offer only when a different legal placement in the previous state leads to a non-terminal board. Qualify using the same deterministic refill as gameplay. Personal-best celebration is recorded once per run; a rewarded continuation invalidates the undone score as a live score, historical record is finalized from completed results.
+
+Server creates the canonical account for an authenticated install. Local Classic profile exists offline, with no email required. Map local profile to the returned immutable server player ID once. An authenticated recovery restores the existing server account and never trusts client ID possession as authentication. Generate unguessable, non-sequential public codes and enforce uniqueness in DB. Public codes locate accounts and never authenticate. Use explicit friend acceptance, block/report and limited profile visibility. Treat nicknames as untrusted Unicode text, normalize canonical form, limit grapheme length, detect invisibles and unsafe bidi controls, and preserve legitimate Arabic shaping. Fallback names are deterministic. Recheck country limits, block state and ownership server-side. Country choice freezes for the current weekly window.
+
+## Ranked API contract
+
+Define OpenAPI and versioned clients for profile, friend invites, daily board, attempt start/submit, rankings, preferences, reports and account deletion. Use cursor pagination and stable problem codes. Starting a ranked attempt requires a server-authenticated session and server-issued attempt ID. In one transaction reserve an attempt slot with a unique player/board/slot constraint and bind rules version, board digest, published move cap and close timestamp. Idempotent retries return the original attempt; restarting or reinstalling cannot reset server limits for that account.
+
+On submit, accept ordered slot/row/column moves only. Recompute board and score server-side, enforce terminal conditions, move cap and payload size, then atomically finalize attempt and update daily best. Deduplicate by attempt and reject conflicting payloads. Require receipt before published UTC cutoff. Allow interrupted play to continue locally and show pending/expired state accurately. Two attempts daily and best score counts. Weekly result sums best four eligible daily scores; ties share a rank. Ensure boards have equal move caps and comparable score ranges in offline validation. No proctoring claim: shared solutions remain possible. Rate-limit account creation, nickname changes, friend invites and results; verify abnormal results without automatic punishment based on score alone.
+
+## Build and Chrome
+
+Provide a bootstrap command and checked-in development fixtures for a full Classic, result and simulated league. From apps/mobile run flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080. Keep browser-only ads, push, account, and analytics adapters deterministic and visibly labeled in development. Verify the actual route, screenshot the changed state and provide the local URL or forwarded preview. Native Android runs on emulator and physical device. Instrument frame time and input latency in profile/release builds; Chrome is supplemental evidence. Use content-addressed fixtures for deterministic screenshots and avoid storing volatile screenshots in git unless they are deliberate baseline tests.
