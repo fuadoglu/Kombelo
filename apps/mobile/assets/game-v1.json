@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "boardSize": 8,
+  "traySize": 3,
+  "rng": {
+    "initialZeroReplacement": 1831565813,
+    "shifts": [
+      13,
+      17,
+      5
+    ],
+    "modulus": 4294967296
+  },
+  "palette": [
+    "cyan",
+    "yellow",
+    "magenta",
+    "coral",
+    "violet"
+  ],
+  "catalog": [
+    {
+      "id": "dot",
+      "weight": 12,
+      "mask": [
+        "#"
+      ]
+    },
+    {
+      "id": "bar2",
+      "weight": 12,
+      "mask": [
+        "##"
+      ]
+    },
+    {
+      "id": "bar3",
+      "weight": 12,
+      "mask": [
+        "###"
+      ]
+    },
+    {
+      "id": "bar4",
+      "weight": 9,
+      "mask": [
+        "####"
+      ]
+    },
+    {
+      "id": "bar5",
+      "weight": 4,
+      "mask": [
+        "#####"
+      ]
+    },
+    {
+      "id": "square2",
+      "weight": 12,
+      "mask": [
+        "##",
+        "##"
+      ]
+    },
+    {
+      "id": "square3",
+      "weight": 3,
+      "mask": [
+        "###",
+        "###",
+        "###"
+      ]
+    },
+    {
+      "id": "el3",
+      "weight": 11,
+      "mask": [
+        "##",
+        "#."
+      ]
+    },
+    {
+      "id": "el5",
+      "weight": 6,
+      "mask": [
+        "###",
+        "#..",
+        "#.."
+      ]
+    },
+    {
+      "id": "tee4",
+      "weight": 8,
+      "mask": [
+        "###",
+        ".#."
+      ]
+    },
+    {
+      "id": "zig4",
+      "weight": 6,
+      "mask": [
+        ".##",
+        "##."
+      ]
+    },
+    {
+      "id": "zag4",
+      "weight": 5,
+      "mask": [
+        "##.",
+        ".##"
+      ]
+    }
+  ],
+  "score": {
+    "cell": 1,
+    "line": 10,
+    "multiCoefficient": 5,
+    "comboStep": 3,
+    "comboBonusCapSteps": 9
+  },
+  "ranked": {
+    "maxMoves": 24,
+    "maxAttempts": 2,
+    "weeklyBestDays": 4
+  }
+}

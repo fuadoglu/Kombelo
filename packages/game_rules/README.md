@@ -1,39 +1,14 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# game_rules
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+Pure Dart, deterministic rules for Kombelo's versioned 8×8 block puzzle. This package contains no Flutter, storage, or network code.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/tools/pub/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## Current scope
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+- Immutable board, piece, tray, and game snapshot models.
+- Versioned xorshift32 RNG and weighted piece/rotation/color generation.
+- Placement validation, line-intersection clearing, combo chain, score, and move cap.
+- JSON snapshot encoding for the local persistence adapter.
 
-## Features
+The canonical v1 rules and vectors live in `../../contracts/game-v1.json` and `../../contracts/game-v1-vectors.json`. Runtime catalog asset parity is checked by `scripts/check_contracts.py`.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+Run `dart analyze` and `dart test` from this package directory. See `docs/GAME_PROTOCOL.md` for the normative rules and migration policy.

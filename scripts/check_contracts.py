@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 game = json.loads((ROOT / "contracts/game-v1.json").read_text())
 vectors = json.loads((ROOT / "contracts/game-v1-vectors.json").read_text())
 api = json.loads((ROOT / "contracts/openapi.json").read_text())
+assert (ROOT / "apps/mobile/assets/game-v1.json").read_bytes() == (ROOT / "contracts/game-v1.json").read_bytes(), "Mobile runtime rule asset must match the canonical game contract."
 
 
 def step(value):

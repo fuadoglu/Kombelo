@@ -10,7 +10,7 @@ Kombelo portret ekranda bir baş barmaqla oynanan blok pazlıdır. Oyunçu üç 
 
 İlk buraxılış **Android** üçündür. **iOS** ayrıca cihaz və mağaza yoxlamalarından sonra gəlir. **Chrome** inkişaf zamanı lokal oyunu nümayiş etdirmək, toxunma axınını və interfeys dəyişikliklərini yoxlamaq üçündür.
 
-> **Cari vəziyyət:** Məhsul spesifikasiyası ilə yanaşı oyun nüvəsinin ilk işlək Dart paketi və v1 RNG/xal vektorları üçün icra olunan testlər mövcuddur. Flutter ekranı, cihaz yaddaşı, API/server, mağaza buraxılışı və Chrome oyunu hələ hazırlanmayıb.
+> **Cari vəziyyət:** Flutter-də oynana bilən Klassik lövhə, deterministik Dart oyun nüvəsi və SQLite raund yaddaşı var. Brauzer və Android paketləmə yoxlamaları davam edir. Liqa, hesab, inteqrasiyalar, doqquz dil və buraxılış hələ hazırlanmayıb.
 
 | | Oyunçu təcrübəsi | Məhsul qərarı |
 |---|---|---|
@@ -106,30 +106,33 @@ Atlas brauzerdə yerli işləyən dizayn referansıdır. Liqa, reklam və hesab 
 | **Onlayn xidmət** | Dart API və PostgreSQL | Profil, dostlar, cəhdlər, serverdə xal yoxlaması, sıralama və bildiriş növbəsi. |
 | **Əməliyyatlar** | Versiyalı konfiqurasiya, planlaşdırılmış işlər və auditli əmrlər | Gündəlik lövhələrin açılması, həftəlik nəticələrin hesablanması, qüsurlu lövhənin ləğvi və reklamın dayandırılması. Admin paneli nəzərdə tutulmur. |
 
-İcra zamanı `apps/mobile`, `packages/game_rules` və `services/api` qovluqları bu sərhədlərə əsasən yaradılır. [Texniki spesifikasiya](docs/ENGINEERING.md) · [OpenAPI](contracts/openapi.json) · [PostgreSQL sxemi](contracts/schema.sql)
+`apps/mobile` və `packages/game_rules` hazırkı ilkin mərhələnin tətbiq/nüvə sərhədləridir. `services/api` sonrakı mərhələdə OpenAPI və SQL sxeminə əsasən əlavə olunacaq. [Texniki spesifikasiya](docs/ENGINEERING.md) · [OpenAPI](contracts/openapi.json) · [PostgreSQL sxemi](contracts/schema.sql)
 
 ## 6. Lokal yoxlama və Chrome nümayişi
 
-İlk oyun nüvəsi incrementini quraşdırmaq və yoxlamaq üçün repo kökündən:
+İş mühitini hazırlamaq və mövcud yoxlamaları işə salmaq üçün repo kökündən:
 
 ```sh
 ./scripts/bootstrap.sh
 ./scripts/verify.sh
 ```
 
-`bootstrap.sh` Dart 3.14.0 tələb edir (Flutter stable 3.50.0 paketində gəlir). Bu increment `game_rules` paketinin statik analizini və testlərini, həmçinin sənəd yoxlayıcılarını işlədir. Flutter/Chrome/Android qəbul yoxlamaları oynana bilən tətbiq Slice A-da hazır olduqdan sonra tətbiq edilir.
+Flutter 3.50.0 / Dart 3.14.0 dəqiq SDK hədəfidir. Bootstrap versiyalı game rules faylını Flutter asset-ə sinxronlaşdırır, Dart workspace-i bərpa edir və Chrome üçün SQLite WASM/worker fayllarını yaradır. Verify statik analizi, oyun qaydası vektorlarını, UI və SQLite testlərini, sənəd checker-lərini işlədir.
+
+Chrome preview:
+
+```sh
+cd apps/mobile
+flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080
+```
+
+`?fixture=intersection` development URL-si acceptance A03 üçün iki xəttin kəsişmə vəziyyətini açır. Android APK build-ni cihaz yoxlamasından əvvəl hazırlamaq olar; Chrome testi native həyat dövrü və jest yoxlamasını əvəz etmir.
 
 Yalnız mövcud sənədləri yoxlamaq üçün:
 
 ```sh
 python3 scripts/check_contracts.py
 python3 scripts/check_lifecycle.py
-```
-
-Bu əmr Markdown keçidlərini, SVG sintaksisini, fiqur kataloqunu, oyun vektorlarını və OpenAPI daxili istinadlarını yoxlayır. İlk icra mərhələsində Flutter iş sahəsi və quraşdırma əmri əlavə edildikdən sonra, `apps/mobile` daxilində:
-
-```sh
-flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080
 ```
 
 **Hər görünən mərhələ üçün Codex** dəyişən axını Chrome-da işlədir, **360×800** və **430×932** ölçülərində yoxlayır və canlı önizləmə linki və ya ekran görüntüsü təqdim edir. RTL və azaldılmış hərəkət dəyişikliklə əlaqəlidirsə yoxlamaya daxil edilir. Yoxlama qeydi əmri, ekran ölçüsünü, ssenarini, müşahidə edilən nəticəni və qalan məhdudiyyəti göstərir.

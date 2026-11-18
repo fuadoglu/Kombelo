@@ -14,8 +14,29 @@ class ShapeCatalog {
           );
         }),
       ) {
-    if (_shapes.isEmpty || _shapes.any((shape) => shape.weight <= 0)) {
-      throw const FormatException('Shape catalog requires positive weights.');
+    final ids = <String>{};
+    if (_shapes.isEmpty ||
+        _shapes.any((shape) {
+          final mask = shape.mask;
+          final validMask =
+              mask.isNotEmpty &&
+              mask.length <= 8 &&
+              mask.first.isNotEmpty &&
+              mask.first.length <= 8 &&
+              mask.every(
+                (row) =>
+                    row.length == mask.first.length &&
+                    RegExp(r'^[.#]+$').hasMatch(row),
+              ) &&
+              mask.any((row) => row.contains('#'));
+          return shape.id.isEmpty ||
+              !ids.add(shape.id) ||
+              shape.weight <= 0 ||
+              !validMask;
+        })) {
+      throw const FormatException(
+        'Invalid shape catalog: ids, weights, or masks.',
+      );
     }
   }
 

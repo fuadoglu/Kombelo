@@ -1,0 +1,7 @@
+name: kombelo_workspace
+publish_to: none
+environment:
+  sdk: ^3.14.0
+workspace:
+  - apps/mobile
+  - packages/game_rules

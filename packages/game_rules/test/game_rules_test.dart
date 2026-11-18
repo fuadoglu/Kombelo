@@ -75,14 +75,35 @@ void main() {
       }
     });
 
-    test('weighted generator consumes exactly two values per slot', () {
+    test('weighted generator consumes exactly three values per slot', () {
       final catalog = ShapeCatalog.fromJson(rules);
       final generated = PieceGenerator(catalog).drawTray(1);
       expect(generated.pieces, hasLength(3));
       expect(generated.rng, 2005365029);
-      expect(generated.pieces.map((piece) => piece.id), ['el3', 'zag4', 'tee4']);
+      expect(generated.pieces.map((piece) => piece.id), [
+        'el3',
+        'zag4',
+        'tee4',
+      ]);
       expect(generated.pieces.map((piece) => piece.rotation), [1, 1, 2]);
       expect(generated.pieces.map((piece) => piece.color), [1, 4, 4]);
+    });
+
+    test('game snapshot round-trips tray orientation, score, and RNG', () {
+      final initial = PieceGenerator(ShapeCatalog.fromJson(rules)).drawTray(1);
+      final original = GameState(
+        board: List.generate(64, (index) => index == 7 ? 3 : -1),
+        tray: initial.pieces,
+        score: 120,
+        chain: 3,
+        best: 220,
+        rng: initial.rng,
+        moveCount: 8,
+      );
+      final restored = GameState.fromJson(
+        jsonDecode(jsonEncode(original.toJson())) as Map<String, dynamic>,
+      );
+      expect(restored.toJson(), original.toJson());
     });
 
     test('illegal placement leaves immutable game state untouched', () {
