@@ -11,3 +11,9 @@
 - Never commit keys, signing materials, service-account credentials, raw player data or production ad IDs in test paths. Use test inventory only. Never provision, publish, merge or change production configuration without explicit authorization.
 - Do not introduce admin UI, purchases, paid rank advantages, copied game assets, ad-triggered difficulty, fake achievements, runtime locale guessing from IP or device fingerprinting.
 - Before release, satisfy docs/RELEASE.md. Document real blockers rather than weakening gates.
+
+## Normative specifications
+
+- Follow [execution slices](docs/EXECUTION.md). Use the game JSON and vectors, [game protocol](docs/GAME_PROTOCOL.md), [OpenAPI](contracts/openapi.json), [SQL schema](contracts/schema.sql) and the relevant UI/integration contracts before changing behavior.
+- Run `python3 scripts/check_contracts.py` for contract edits. Do not stop after creating scaffolding. Finish the active slice through its normal entry point, exercise failure paths and demonstrate the user-visible result.
+- Use the browser and native evidence format in EXECUTION. If a genuine platform prerequisite is absent, complete independent checks and identify precisely which verification remains.

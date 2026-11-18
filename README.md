@@ -1,39 +1,43 @@
-# 🟪 Kombelo
+<img src="docs/media/brand.svg" alt="Kombelo mark" width="84" height="84">
+
+# Kombelo
 
 **Place blocks. Chain combos. Beat your best.**
 
-Kombelo is a portrait-first, one-thumb block puzzle for Android, followed by iOS. Place three pieces on an 8×8 board in any order, clear rows and columns, chain combos and chase a personal best. Glossy ceramic blocks, a precise drop preview and a rising three-note sound motif make every clear readable and gratifying.
+An Android-first, one-thumb puzzle with an 8×8 board, three pieces, line clears and escalating combo feedback. iOS follows after Android release validation.
 
-| | Product |
+| | What players get |
 |---|---|
-| 🎮 | **Classic** · Offline endless play, local records and resume after every committed move |
-| 🏆 | **Leagues** · One daily board, two ranked attempts, friends / country / world rankings and weekly standings |
-| 👤 | **Profile** · Automatic immutable ID, editable nickname, public friend code and optional account recovery |
-| 🌍 | **Languages** · AZ, EN, TR, RU, ES, pt-BR, DE, FR and AR with automatic locale resolution and manual override |
-| 🔊 | **Feedback** · Line waves, combo notes, record fanfare and independent sound, music, haptics and reduced motion |
-| 🔔 | **Notifications** · Opt-in daily boards and genuine friend activity, with local quiet hours |
-| 🎬 | **Revenue** · AdMob only, through Classic round transitions and an optional earned undo |
-| ⚙️ | **Operations** · Automatic schedule and ranking, versioned configuration, audited CLI, no admin panel |
+| <img src="docs/media/game.svg" width="20" alt=""> | **Classic** · Offline endless play, personal best and resume after every move |
+| <img src="docs/media/trophy.svg" width="20" alt=""> | **Leagues** · One daily board, two attempts, Friends / Country / World rankings |
+| <img src="docs/media/world.svg" width="20" alt=""> | **Nine locales** · AZ, EN, TR, RU, ES, pt-BR, DE, FR, AR with device detection and manual override |
+| <img src="docs/media/sound.svg" width="20" alt=""> | **Feedback** · Ceramic blocks, immediate drag, clear waves, combo sound and reduced motion |
+| <img src="docs/media/bell.svg" width="20" alt=""> | **Return** · Opt-in daily boards and real friend activity |
+| <img src="docs/media/shield.svg" width="20" alt=""> | **Profile and revenue** · Automatic ID, editable nickname, AdMob in eligible Classic sessions |
 
-## 🧭 Repository map
+## Build map
 
-| | Document | Purpose |
-|---|---|---|
-| 🤖 | [AGENTS.md](AGENTS.md) | Mandatory Codex execution and review contract |
-| 🎨 | [Product and UX](docs/PRODUCT.md) | Game rules, screen flows, design, motion and audio |
-| 🏗️ | [Engineering](docs/ENGINEERING.md) | Monorepo, engines, API, data, Android and browser verification |
-| 🚀 | [Release and operations](docs/RELEASE.md) | Milestones, QA, configuration, incident recovery and store gates |
-| 🛡️ | [Trust and growth](docs/TRUST_AND_GROWTH.md) | AdMob, Firebase, notifications, legal pages and asset licensing |
+| Guide | Contract |
+|---|---|
+| <img src="docs/media/code.svg" width="20" alt=""> [AGENTS.md](AGENTS.md) | Codex rules and [execution slices](docs/EXECUTION.md) |
+| <img src="docs/media/game.svg" width="20" alt=""> [Product](docs/PRODUCT.md) | [Game protocol](docs/GAME_PROTOCOL.md), [catalog](contracts/game-v1.json), [vectors](contracts/game-v1-vectors.json) |
+| <img src="docs/media/sound.svg" width="20" alt=""> [UI system](docs/UI_SYSTEM.md) | Layout, palette, original mark, motion, accessibility and [asset register](docs/ASSET_MANIFEST.md) |
+| <img src="docs/media/code.svg" width="20" alt=""> [Engineering](docs/ENGINEERING.md) | [OpenAPI](contracts/openapi.json), [SQL](contracts/schema.sql), [service behavior](docs/SERVICE_BEHAVIOR.md) |
+| <img src="docs/media/shield.svg" width="20" alt=""> [Trust and growth](docs/TRUST_AND_GROWTH.md) | [Integration matrix](docs/INTEGRATION_MATRIX.md), [legal drafts](docs/LEGAL_DRAFTS.md) |
+| <img src="docs/media/docs.svg" width="20" alt=""> [Release](docs/RELEASE.md) | Android evidence, operations, rollout and iOS readiness |
 
-## 💻 Development workflow
+## Run and verify
 
-This repository starts with specifications. Implement the commands and project directories in the engineering plan before treating the following as runnable.
+**Current status: implementation specification.** The documentation checker runs now with `python3 scripts/check_contracts.py`. The first implementation slice creates and pins the Flutter workspace and bootstrap command.
 
-1. Pin the Flutter SDK and bootstrap dependencies.
-2. Run the shared Dart tests and the Flutter preview tests.
-3. Run `flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080` from `apps/mobile`. Open the served URL in Chrome and verify the milestone using a mobile viewport.
-4. Run the corresponding flow on an Android emulator and physical phone before claiming native readiness. Chrome uses local integration adapters. Android validates ads, notifications, haptics and lifecycle behavior against native SDKs.
+After bootstrap, from `apps/mobile`:
 
-## 📍 Delivery status
+```sh
+flutter run -d chrome --web-hostname=127.0.0.1 --web-port=8080
+```
 
-Documentation baseline. Android ships first. The shared game rules, UI contracts and localization are designed for the subsequent iOS release. See the [release gates](docs/RELEASE.md) for evidence required at each stage.
+Open the local or forwarded URL in Chrome. Show the implemented flow at 360×800 and 430×932, and verify native integration separately on Android. Preview adapters are labeled; they never stand in for native ads, consent, push, audio focus or lifecycle evidence.
+
+## Operations
+
+Flutter and a shared Dart rule engine, SQLite local state, Dart API and PostgreSQL. AdMob is the only revenue source. Firebase supplies gated product telemetry, crashes and push. Versioned configuration, scheduled ranking and audit commands support operations without an admin panel.
