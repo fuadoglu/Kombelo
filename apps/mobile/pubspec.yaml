@@ -29,3 +29,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/game-v1.json
+    - assets/classic-lifecycle-v1.json

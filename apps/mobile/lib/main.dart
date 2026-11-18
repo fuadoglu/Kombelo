@@ -19,9 +19,30 @@ const colors = <Color>[
   Color(0xFFA68CFF),
 ];
 
+Future<String>? _rulesAssetSource;
+Future<String>? _lifecycleAssetSource;
+
+Future<String> _loadRulesAsset() =>
+    _rulesAssetSource ??= rootBundle.loadString('assets/game-v1.json');
+
+Future<String> _loadLifecycleAsset() => _lifecycleAssetSource ??= rootBundle
+    .loadString('assets/classic-lifecycle-v1.json');
+
 class KombeloApp extends StatelessWidget {
-  const KombeloApp({super.key, this.openStore});
+  const KombeloApp({
+    super.key,
+    this.openStore,
+    this.fixture,
+    this.rulesJson,
+    this.lifecycleJson,
+  });
   final Future<GameStore> Function()? openStore;
+  @visibleForTesting
+  final String? fixture;
+  @visibleForTesting
+  final String? rulesJson;
+  @visibleForTesting
+  final String? lifecycleJson;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -36,13 +57,30 @@ class KombeloApp extends StatelessWidget {
       ),
       useMaterial3: true,
     ),
-    home: ClassicScreen(openStore: openStore),
+    home: ClassicScreen(
+      openStore: openStore,
+      fixture: fixture,
+      rulesJson: rulesJson,
+      lifecycleJson: lifecycleJson,
+    ),
   );
 }
 
 class ClassicScreen extends StatefulWidget {
-  const ClassicScreen({super.key, this.openStore});
+  const ClassicScreen({
+    super.key,
+    this.openStore,
+    this.fixture,
+    this.rulesJson,
+    this.lifecycleJson,
+  });
   final Future<GameStore> Function()? openStore;
+  @visibleForTesting
+  final String? fixture;
+  @visibleForTesting
+  final String? rulesJson;
+  @visibleForTesting
+  final String? lifecycleJson;
 
   @override
   State<ClassicScreen> createState() => _ClassicScreenState();
@@ -54,6 +92,7 @@ class _ClassicScreenState extends State<ClassicScreen> {
   GameState? _state;
   int? _selected;
   int? _hover;
+  int? _draggingSlot;
   bool _loading = true;
   bool _committing = false;
   String _feedback = 'Fiquru seç və lövhədə uyğun xanaya toxun.';
@@ -69,13 +108,24 @@ class _ClassicScreenState extends State<ClassicScreen> {
 
   Future<void> _restore() async {
     try {
-      final source = await rootBundle.loadString('assets/game-v1.json');
+      final source = widget.rulesJson ?? await _loadRulesAsset();
       final catalog = ShapeCatalog.decode(source);
       final store = await (widget.openStore?.call() ?? GameStore.open());
       final saved = await store.load();
       GameState? state;
-      if (_intersectionFixtureRequested) {
+      final fixture = _activeFixture;
+      if (fixture == 'intersection') {
         state = _intersectionFixture(catalog);
+      } else if (fixture == 'gesture') {
+        state = _gestureFixture(catalog);
+      } else if (fixture == 'terminal' || fixture == 'alternate') {
+        final lifecycle = jsonDecode(
+          widget.lifecycleJson ?? await _loadLifecycleAsset(),
+        ) as Map<String, dynamic>;
+        state = _lifecycleFixture(
+          catalog,
+          lifecycle['before'] as Map<String, dynamic>,
+        );
       } else if (saved != null && saved['rulesVersion'] == 1) {
         state = GameState.fromJson(saved['state'] as Map<String, dynamic>);
       } else if (saved != null) {
@@ -120,8 +170,8 @@ class _ClassicScreenState extends State<ClassicScreen> {
     );
   }
 
-  bool get _intersectionFixtureRequested =>
-      kDebugMode && Uri.base.queryParameters['fixture'] == 'intersection';
+  String? get _activeFixture =>
+      kDebugMode ? widget.fixture ?? Uri.base.queryParameters['fixture'] : null;
 
   GameState _intersectionFixture(ShapeCatalog catalog) {
     final rows = [
@@ -147,6 +197,50 @@ class _ClassicScreenState extends State<ClassicScreen> {
       chain: 2,
       best: 0,
       rng: 21,
+    );
+  }
+
+  GameState _gestureFixture(ShapeCatalog catalog) {
+    final dotIndex = catalog.ids.indexOf('dot');
+    return GameState(
+      board: List.filled(64, -1),
+      tray: [
+        for (var slot = 0; slot < 3; slot++)
+          catalog.pieceForIndex(dotIndex, color: slot),
+      ],
+      score: 0,
+      chain: 0,
+      best: 0,
+      rng: 21,
+    );
+  }
+
+  GameState _lifecycleFixture(
+    ShapeCatalog catalog,
+    Map<String, dynamic> fixture,
+  ) {
+    final board = (fixture['board'] as List<dynamic>)
+        .cast<String>()
+        .join()
+        .split('')
+        .map((cell) => cell == '#' ? 0 : -1)
+        .toList();
+    final tray = (fixture['tray'] as List<dynamic>).map<Piece?>((raw) {
+      if (raw == null) return null;
+      final item = raw as Map<String, dynamic>;
+      final index = catalog.ids.indexOf(item['shape'] as String);
+      if (index < 0) {
+        throw FormatException('Unknown fixture shape ${item['shape']}');
+      }
+      return catalog.pieceForIndex(index, color: item['color'] as int);
+    }).toList();
+    return GameState(
+      board: board,
+      tray: tray,
+      score: fixture['score'] as int,
+      chain: fixture['chain'] as int,
+      best: fixture['personalBest'] as int,
+      rng: fixture['rng'] as int,
     );
   }
 
@@ -219,6 +313,8 @@ class _ClassicScreenState extends State<ClassicScreen> {
     });
   }
 
+  void _playCell(int slot, int cell) => _play(slot, cell ~/ 8, cell % 8);
+
   void _showResult() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -283,7 +379,7 @@ class _ClassicScreenState extends State<ClassicScreen> {
                       ),
                       const Spacer(),
                       IconButton(
-                        onPressed: _pause,
+                        onPressed: _draggingSlot == null ? _pause : null,
                         tooltip: 'Fasilə',
                         icon: const Icon(Icons.pause_rounded),
                       ),
@@ -331,19 +427,11 @@ class _ClassicScreenState extends State<ClassicScreen> {
                         busy: _committing,
                         onHover: (index) => setState(() => _hover = index),
                         onTap: (index) {
-                          if (_selected != null) {
+                          if (_selected != null && _draggingSlot == null) {
                             _play(_selected!, index ~/ 8, index % 8);
                           }
                         },
-                        onDrop: (slot, offset, box) {
-                          final local = box.globalToLocal(offset);
-                          final cellSize = (boardSize - 12) / 8;
-                          final row = ((local.dy - 6) / cellSize).floor();
-                          final col = ((local.dx - 6) / cellSize).floor();
-                          if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-                            _play(slot, row, col);
-                          }
-                        },
+                        onDrop: _playCell,
                       ),
                     ),
                   ),
@@ -357,11 +445,25 @@ class _ClassicScreenState extends State<ClassicScreen> {
                           child: TraySlot(
                             slot: slot,
                             piece: game.tray[slot],
+                            width: (constraints.maxWidth - 48) / 3,
                             selected: _selected == slot,
-                            enabled: !_committing,
-                            onTap: () => setState(() => _selected = slot),
-                            onDragStarted: () =>
-                                setState(() => _selected = slot),
+                            enabled:
+                                !_committing &&
+                                (_draggingSlot == null ||
+                                    _draggingSlot == slot),
+                            onTap: () {
+                              if (_draggingSlot == null) {
+                                setState(() => _selected = slot);
+                              }
+                            },
+                            onDragStarted: () => setState(() {
+                              _selected = slot;
+                              _draggingSlot = slot;
+                            }),
+                            onDragEnded: (accepted) => setState(() {
+                              _draggingSlot = null;
+                              if (!accepted) _hover = null;
+                            }),
                           ),
                         ),
                       ),
@@ -464,7 +566,7 @@ class GameBoard extends StatefulWidget {
   final int? selected, hoverCell;
   final bool busy;
   final ValueChanged<int> onTap, onHover;
-  final void Function(int slot, Offset offset, RenderBox box) onDrop;
+  final void Function(int slot, int cell) onDrop;
   @override
   State<GameBoard> createState() => _GameBoardState();
 }
@@ -476,10 +578,22 @@ class _GameBoardState extends State<GameBoard> {
     final box = _key.currentContext?.findRenderObject() as RenderBox?;
     if (box == null) return null;
     final local = box.globalToLocal(global);
-    final cell = (box.size.width - 12) / 8;
-    final row = ((local.dy - 6) / cell).floor();
-    final col = ((local.dx - 6) / cell).floor();
-    if (row < 0 || row > 7 || col < 0 || col > 7) return null;
+    const inset = 5.0;
+    const boundaryTolerance = 4.0;
+    final gridExtent = box.size.width - inset * 2;
+    final maxCoordinate = gridExtent + boundaryTolerance;
+    final x = local.dx - inset;
+    final y = local.dy - inset;
+    if (x < -boundaryTolerance ||
+        y < -boundaryTolerance ||
+        x > maxCoordinate ||
+        y > maxCoordinate) {
+      return null;
+    }
+    final cell = (gridExtent - 14) / 8;
+    final pitch = cell + 2;
+    final col = (x.clamp(0.0, gridExtent - 1) / pitch).floor();
+    final row = (y.clamp(0.0, gridExtent - 1) / pitch).floor();
     return row * 8 + col;
   }
 
@@ -498,8 +612,8 @@ class _GameBoardState extends State<GameBoard> {
       }
     },
     onAcceptWithDetails: (details) {
-      final box = _key.currentContext?.findRenderObject() as RenderBox?;
-      if (box != null) widget.onDrop(details.data, details.offset, box);
+      final index = _cellAt(details.offset);
+      if (index != null) widget.onDrop(details.data, index);
     },
     builder: (context, candidates, rejected) => GestureDetector(
       onTapUp: (details) {
@@ -560,7 +674,7 @@ class _GameBoardState extends State<GameBoard> {
             return GestureDetector(
               onTap: () => widget.onTap(index),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 90),
+                duration: const Duration(milliseconds: 260),
                 decoration: BoxDecoration(
                   color: baseColor,
                   borderRadius: BorderRadius.circular(5),
@@ -593,15 +707,19 @@ class TraySlot extends StatelessWidget {
     super.key,
     required this.slot,
     required this.piece,
+    required this.width,
     required this.selected,
     required this.enabled,
     required this.onTap,
     required this.onDragStarted,
+    required this.onDragEnded,
   });
   final int slot;
   final Piece? piece;
+  final double width;
   final bool selected, enabled;
   final VoidCallback onTap, onDragStarted;
+  final ValueChanged<bool> onDragEnded;
 
   @override
   Widget build(BuildContext context) {
@@ -657,12 +775,16 @@ class TraySlot extends StatelessWidget {
       data: slot,
       maxSimultaneousDrags: enabled ? 1 : 0,
       onDragStarted: onDragStarted,
-      feedbackOffset: const Offset(0, -48),
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      onDragEnd: (details) => onDragEnded(details.wasAccepted),
       feedback: Material(
         color: Colors.transparent,
         child: Transform.scale(
           scale: 1.15,
-          child: Opacity(opacity: .94, child: child),
+          child: Transform.translate(
+            offset: Offset(-width / 2, -88),
+            child: Opacity(opacity: .94, child: child),
+          ),
         ),
       ),
       childWhenDragging: Opacity(opacity: .35, child: child),

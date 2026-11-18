@@ -13,5 +13,6 @@ if ! grep -q 'Flutter 3.50.0' <<<"$flutter_version" || ! grep -q '3.14.0' <<<"$d
   exit 2
 fi
 cp contracts/game-v1.json apps/mobile/assets/game-v1.json
+cp contracts/classic-lifecycle-v1.json apps/mobile/assets/classic-lifecycle-v1.json
 flutter pub get
 (cd apps/mobile && dart run sqflite_common_ffi_web:setup)

@@ -9,6 +9,7 @@ game = json.loads((ROOT / "contracts/game-v1.json").read_text())
 vectors = json.loads((ROOT / "contracts/game-v1-vectors.json").read_text())
 api = json.loads((ROOT / "contracts/openapi.json").read_text())
 assert (ROOT / "apps/mobile/assets/game-v1.json").read_bytes() == (ROOT / "contracts/game-v1.json").read_bytes(), "Mobile runtime rule asset must match the canonical game contract."
+assert (ROOT / "apps/mobile/assets/classic-lifecycle-v1.json").read_bytes() == (ROOT / "contracts/classic-lifecycle-v1.json").read_bytes(), "Mobile lifecycle fixture must match the canonical acceptance fixture."
 
 
 def step(value):
